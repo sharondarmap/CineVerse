@@ -1,0 +1,13 @@
+[project]
+name = "cineverse"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.121.2",
+    "flask>=3.1.2",
+    "pydantic>=2.12.4",
+    "typing>=3.10.0.0",
+    "uuid>=1.30",
+]
