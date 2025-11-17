@@ -8,6 +8,7 @@ dependencies = [
     "fastapi>=0.121.2",
     "flask>=3.1.2",
     "pydantic>=2.12.4",
+    "sqlalchemy>=2.0.44",
     "typing>=3.10.0.0",
     "uuid>=1.30",
 ]

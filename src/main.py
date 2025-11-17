@@ -101,21 +101,26 @@ def list_films():
 
 # FILM ACTIVITY API
 
-@app.post("/activity/{user_id}/{film_id}", response_model=FilmActivity)
-def create_activity(user_id: str, film_id: str):
-    if user_id not in db_users:
+class ActivityCreate(BaseModel):
+    user_id: str
+    film_id: str
+
+@app.post("/activity", response_model=FilmActivity)
+def create_activity(data: ActivityCreate):
+    if data.user_id not in db_users:
         raise HTTPException(404, "User not found")
-    if film_id not in db_films:
+    if data.film_id not in db_films:
         raise HTTPException(404, "Film not found")
 
     activity_id = str(uuid4())
     activity = FilmActivity(
         activity_id=activity_id,
-        user_id=user_id,
-        film_id=film_id
+        user_id=data.user_id,
+        film_id=data.film_id
     )
     db_activities[activity_id] = activity
     return activity
+
 
 class LogCreate(BaseModel):
     watched_date: date
@@ -133,6 +138,7 @@ def add_log(activity_id: str, data: LogCreate):
     )
     db_activities[activity_id].logs.append(log)
     return db_activities[activity_id]
+
 
 class ReviewCreate(BaseModel):
     review_text: str
@@ -158,6 +164,7 @@ def list_activities(user_id: str):
 
 
 # WATCHLIST API
+
 
 @app.post("/watchlist/{user_id}/{film_id}", response_model=Watchlist)
 def add_to_watchlist(user_id: str, film_id: str):
@@ -188,7 +195,6 @@ def remove_watchlist_item(user_id: str, film_id: str):
         i for i in db_watchlists[user_id].items if i.film_id != film_id
     ]
     return db_watchlists[user_id]
-
 
 # ROOT
 
