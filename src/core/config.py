@@ -1,0 +1,3 @@
+SECRET_KEY = "supersecretjwtkey123"
+ALGORITHM = "HS256"
+ACCESS_EXPIRE_MINUTES = 60
