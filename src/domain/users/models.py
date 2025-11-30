@@ -1,15 +1,5 @@
-from pydantic import BaseModel
-from uuid import uuid4
-
-class User(BaseModel):
-    user_id: str
-    username: str
-    password: str  # hashed password
-
-    @staticmethod
-    def create(username: str, hashed_password: str):
-        return User(
-            user_id=str(uuid4()),
-            username=username,
-            password=hashed_password
-        )
+class User:
+    def __init__(self, user_id: str, username: str, password_hash: str):
+        self.user_id = user_id
+        self.username = username
+        self.password_hash = password_hash

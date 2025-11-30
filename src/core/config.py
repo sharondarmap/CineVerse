@@ -1,3 +1,3 @@
-SECRET_KEY = "supersecretjwtkey123"
+SECRET_KEY = "supersecretkey123"
 ALGORITHM = "HS256"
 ACCESS_EXPIRE_MINUTES = 60

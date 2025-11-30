@@ -1,22 +1,28 @@
+from uuid import uuid4
 from domain.users.models import User
 from domain.users.repository import UserRepository
-from core.security import hash_password, verify_password
+from domain.users.schemas import UserResponse
+from core.security import hash_password
 
 class UsersService:
 
     @staticmethod
     def register(username: str, password: str):
+        # Cek username sudah ada
+        if UserRepository.get_by_username(username):
+            raise ValueError("Username already exists")
+
         hashed = hash_password(password)
-        user = User.create(username, hashed)
-        return UserRepository.save(user)
 
-    @staticmethod
-    def get(username: str):
-        return UserRepository.get_by_username(username)
+        user = User(
+            user_id=str(uuid4()),
+            username=username,
+            password_hash=hashed
+        )
 
-    @staticmethod
-    def verify_login(username: str, password: str):
-        user = UserRepository.get_by_username(username)
-        if not user or not verify_password(password, user.password):
-            return None
-        return user
+        UserRepository.save(user)
+
+        return UserResponse(
+            user_id=user.user_id,
+            username=user.username
+        )
