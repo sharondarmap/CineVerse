@@ -1,5 +1,7 @@
 # 🎬 CineVerse API – Domain-Driven Design + JWT Authentication
 
+![CI Pipeline](https://github.com/sharondarmap/CineVerse/actions/workflows/ci-pipeline.yml/badge.svg)
+
 CineVerse API adalah implementasi awal dari beberapa bounded context utama:  
 **Identity**, **Film Catalog**, dan **Journaling Context**, berdasarkan desain Domain-Driven Design (DDD).
 

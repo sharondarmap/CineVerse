@@ -1,0 +1,56 @@
+name: CI Pipeline CineVerse
+
+# Trigger pipeline saat ada Push atau Pull Request ke branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # JOB 1: Kualitas Kode (Testing & Linting)
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install dependencies dari requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Install tool tambahan untuk testing/linting jika belum ada di requirements.txt
+          pip install pytest pytest-cov flake8 httpx
+
+      - name: Linting (Flake8)
+        run: |
+          # Cek error syntax python (akan stop jika ada error fatal)
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Cek kerapian kode (warning saja, tidak stop build)
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Run Unit Tests (TDD)
+        run: |
+          # Menjalankan test dengan coverage report
+          # --ignore=test.py ditambahkan karena file sampah sebelumnya
+          pytest -v --cov=. --cov-report=xml --ignore=test.py
+
+  # JOB 2: Build Docker (Jalan hanya jika quality-check sukses)
+  docker-build:
+    needs: quality-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build . --file Dockerfile --tag cineverse-api:latest
+          # Tidak perlu push ke registry (seperti DockerHub) untuk tugas ini,
+          # cukup pastikan build berhasil ("Successfully built")
